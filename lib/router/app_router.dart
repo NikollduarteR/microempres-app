@@ -6,11 +6,17 @@ import '../views/ventas_view.dart';
 import '../views/facturacion_view.dart';
 import '../views/contabilidad_view.dart';
 import '../views/clientes_proveedores_view.dart';
+import '../views/login_view.dart';
 
 /// Configuración de rutas con GoRouter
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/', // Vista inicial
+  initialLocation: '/login', // Vista inicial
   routes: [
+    GoRoute(
+      path: '/login',
+      name: 'login',
+      builder: (context, state) => const LoginView(),
+    ),
     GoRoute(
       path: '/',
       name: 'dashboard',
