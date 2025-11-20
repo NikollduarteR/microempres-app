@@ -31,7 +31,7 @@ class _LoginViewState extends State<LoginView> {
                 height: 100,
                 width: 100,
                 decoration: BoxDecoration(
-                  color: AppTheme.primary.withOpacity(0.1),
+                  color: AppTheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Icon(
