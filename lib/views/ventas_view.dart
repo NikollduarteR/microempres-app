@@ -5,7 +5,7 @@ import '../themes/app_theme.dart';
 import '../widgets/category_chips.dart';
 import '../widgets/custom_appbar.dart';
 import '../widgets/custom_bottom_nav.dart';
-import '../widgets/product_card.dart';
+import '../widgets/quick_product_tile.dart';
 import '../widgets/section_header.dart';
 import '../widgets/summary_card.dart';
 
@@ -18,6 +18,50 @@ class VentasView extends StatefulWidget {
 class _VentasViewState extends State<VentasView> {
   int selectedCategory = 0;
   final categories = ['Todos', 'Frutas', 'Verduras', 'Carnes'];
+  final catalogItems = [
+    {
+      'name': 'Manzana gala',
+      'unit': '1 Kg',
+      'stock': '24',
+      'price': 4200.0,
+      'color': Colors.redAccent,
+    },
+    {
+      'name': 'Banano bocadillo',
+      'unit': '1 Kg',
+      'stock': '18',
+      'price': 3800.0,
+      'color': Colors.amber,
+    },
+    {
+      'name': 'Cebolla cabezona',
+      'unit': '500 g',
+      'stock': '35',
+      'price': 2500.0,
+      'color': Colors.deepOrange,
+    },
+    {
+      'name': 'Leche descremada',
+      'unit': '1 L',
+      'stock': '42',
+      'price': 4800.0,
+      'color': Colors.blueAccent,
+    },
+    {
+      'name': 'Arroz premium 500g',
+      'unit': '500 g',
+      'stock': '55',
+      'price': 5200.0,
+      'color': AppTheme.primary,
+    },
+    {
+      'name': 'Huevos AA',
+      'unit': '30 und',
+      'stock': '12',
+      'price': 16500.0,
+      'color': Colors.purple,
+    },
+  ];
   final cartItems = [
     {'name': 'Manzana roja', 'qty': 2, 'price': 12000},
     {'name': 'Arroz premium 500g', 'qty': 1, 'price': 14500},
@@ -185,10 +229,12 @@ class _VentasViewState extends State<VentasView> {
             },
           ),
           const SizedBox(height: 12),
-          const SectionHeader(
+          SectionHeader(
             title: 'Catálogo rápido',
             subtitle: 'Productos filtrados por categoría',
             icon: Icons.storefront,
+            actionText: 'Ver todo',
+            onAction: () {},
           ),
           GridView.builder(
             padding: EdgeInsets.zero,
@@ -196,24 +242,20 @@ class _VentasViewState extends State<VentasView> {
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 1.9,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
+              childAspectRatio: 0.88,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
             ),
-            itemCount: 6,
+            itemCount: catalogItems.length,
             itemBuilder: (context, i) {
-              return ProductCard(
-                name: [
-                  'Manzana',
-                  'Cebolla',
-                  'Plátano',
-                  'Carne',
-                  'Arroz',
-                  'Leche',
-                ][i],
-                subtitle: '1 Kg - Stock: ${30 - i}',
-                price: '\$${(10 + i) * 3}.000',
-                onTap: () {},
+              final item = catalogItems[i];
+              return QuickProductTile(
+                name: item['name'] as String,
+                unit: item['unit'] as String,
+                stock: item['stock'] as String,
+                price: item['price'] as double,
+                color: item['color'] as Color,
+                onAdd: () {},
               );
             },
           ),
