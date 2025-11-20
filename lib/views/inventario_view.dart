@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:microempresa/widgets/search_bar.dart';
+import 'package:provider/provider.dart';
 
+import '../presentation/providers/producto_provider.dart';
 import '../themes/app_theme.dart';
 import '../widgets/category_chips.dart';
 import '../widgets/custom_appbar.dart';
@@ -15,6 +17,15 @@ class InventarioView extends StatefulWidget {
 }
 
 class _InventarioViewState extends State<InventarioView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = context.read<ProductoProvider>();
+      provider.loadProductos();
+    });
+  }
+
   int selectedCategory = 0;
   final categories = [
     'Todos',
@@ -159,6 +170,50 @@ class _InventarioViewState extends State<InventarioView> {
             ),
           ),
           const SizedBox(height: 12),
+          Consumer<ProductoProvider>(
+            builder: (context, provider, _) {
+              if (provider.isLoading && provider.productos.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              if (provider.hasError) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Text(
+                    provider.errorMessage ?? 'Error al cargar productos',
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                );
+              }
+              if (provider.productos.isEmpty) {
+                return const SizedBox.shrink();
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SectionHeader(
+                    title: 'Productos',
+                    subtitle: 'Listado en inventario desde la API',
+                    icon: Icons.inventory_2_outlined,
+                  ),
+                  ...provider.productos.map(
+                    (producto) => Card(
+                      child: ListTile(
+                        leading: const Icon(Icons.inventory_2),
+                        title: Text(producto.nombre),
+                        subtitle: Text(
+                          'Stock: ${producto.stock ?? 0} • Precio: ${producto.precioDeVenta ?? 0}',
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+              );
+            },
+          ),
           const SectionHeader(
             title: 'Movimientos recientes',
             subtitle: 'Últimas entradas, salidas y ajustes',
@@ -229,7 +284,10 @@ class _InventarioViewState extends State<InventarioView> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () {
+          final provider = context.read<ProductoProvider>();
+          provider.loadProductos();
+        },
         icon: const Icon(Icons.add),
         label: const Text('Nuevo producto'),
       ),
